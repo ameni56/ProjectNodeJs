@@ -1,0 +1,48 @@
+<!-- views/message_list.twig -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Liste des messages</title>
+  <style>
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    th, td {
+      border: 1px solid black;
+      padding: 8px;
+      text-align: left;
+    }
+  </style>
+</head>
+<body>
+  <a href="/Message">AddMessage</a>
+  <br>
+  <h1>Liste des messages</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>Pseudo</th>
+        <th>Contenu</th>
+        <th>Likes</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for message in messages %}
+      <tr>
+        <td>{{ message.pseudo }}</td>
+        <td>{{ message.content }}</td>
+        <td>{{ message.likes }}</td>
+        <td>
+         <a href="/Message/LikeMessage/{{ message._id }}" >Like</a>
+          <a href="/Message/EditMessage/{{ message._id }}">Edit</a>
+          <a href="/Message/DeleteMessage/{{ message._id }}">Delete</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</body>
+</html>

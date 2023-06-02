@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Modifier un message</title>
+</head>
+<body>
+  <h1>Modifier un message</h1>
+  <form action="/Message/EditMessage/{{ message._id }}" method="post">
+    <label for="pseudo">Pseudo:</label>
+    <input type="text" id="pseudo" name="pseudo" value="{{ message.pseudo }}" required>
+    <br>
+    <label for="content">Contenu:</label>
+    <textarea id="content" name="content" required>{{ message.content }}</textarea>
+    <br>
+    <button type="submit">Update</button>
+  </form>
+</body>
+</html>

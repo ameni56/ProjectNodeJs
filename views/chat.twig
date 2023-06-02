@@ -1,0 +1,376 @@
+{# <html>
+<head>
+  <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+  <h1>Chat</h1>
+  <a href="/Message/Liste">Liste des messages</a>
+  <div id="messages"></div>
+  Pseudo:<input type="text" id="pseudoInput" placeholder="Enter your pseudo">
+  Content:<input type="text" id="contentInput" placeholder="Enter your message">
+  <button onclick="sendMessage()">Envoyer</button>
+
+  <script>
+    const socket = io.connect();
+    const messagesContainer = document.getElementById('messages');
+    const pseudoInput = document.getElementById('pseudoInput');
+    const contentInput = document.getElementById('contentInput');
+
+    // Request permission for notifications
+    if (Notification.permission !== 'granted') {
+      Notification.requestPermission();
+    }
+
+    socket.on('msg', (message) => {
+      const p = document.createElement('p');
+      p.innerText = message.content;
+      messagesContainer.appendChild(p);
+    });
+
+    socket.on('userConnected', () => {
+      const p = document.createElement('p');
+      p.innerText = "A new user is connected";
+      messagesContainer.appendChild(p);
+
+      // Display notification for new user connection
+      if (Notification.permission === 'granted') {
+        new Notification('New User Connected', { body: 'A new user has joined the chat' });
+      }
+    });
+
+    socket.on('userDisconnected', () => {
+      const p = document.createElement('p');
+      p.innerText = "A user has disconnected";
+      messagesContainer.appendChild(p);
+    });
+
+    function sendMessage() {
+      const pseudo = pseudoInput.value;
+      const content = contentInput.value;
+      const message = { pseudo, content };
+      socket.emit('msg', message);
+      contentInput.value = '';
+    }
+  </script>
+</body>
+</html> #}
+
+
+{#--------------hetha b typing without onekey up --------------#}
+{# <html>
+<head>
+  <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+  <h1>Chat</h1>
+  <a href="/Message/Liste">Liste des messages</a>
+  <div id="messages"></div>
+  Pseudo:<input type="text" id="pseudoInput" placeholder="Enter your pseudo">
+  Content:<input type="text" id="contentInput" placeholder="Enter your message" onkeyup="handleTyping()">
+  <button onclick="sendMessage()">Envoyer</button>
+
+  <script>
+    const socket = io.connect();
+    const messagesContainer = document.getElementById('messages');
+    const pseudoInput = document.getElementById('pseudoInput');
+    const contentInput = document.getElementById('contentInput');
+    let typingTimeout = null;
+
+    socket.on('msg', (message) => {
+      const p = document.createElement('p');
+      p.innerText = message.content;
+      messagesContainer.appendChild(p);
+    });
+
+    socket.on('userConnected', () => {
+      const p = document.createElement('p');
+      p.innerText = "A new user is connected";
+      messagesContainer.appendChild(p);
+    });
+
+    socket.on('userDisconnected', () => {
+      const p = document.createElement('p');
+      p.innerText = "A user has disconnected";
+      messagesContainer.appendChild(p);
+    });
+
+    socket.on('typing', (user) => {
+      const p = document.createElement('p');
+      p.innerText = `${user} is typing...`;
+      messagesContainer.appendChild(p);
+      clearTimeout(typingTimeout);
+      typingTimeout = setTimeout(() => {
+        p.remove();
+      }, 2000);
+    });
+
+    function sendMessage() {
+      const pseudo = pseudoInput.value;
+      const content = contentInput.value;
+      const message = { pseudo, content };
+      socket.emit('msg', message);
+      contentInput.value = '';
+    }
+
+    function handleTyping() {
+      const pseudo = pseudoInput.value;
+      socket.emit('typing', pseudo);
+    }
+  </script>
+</body>
+</html> #}
+
+{#--------------------hethi notifcation l dekheel b design----------}
+{# 
+<html>
+<head>
+  <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+  <h1>Chat</h1>
+  <a href="/Message/Liste">Liste des messages</a>
+  <div id="messages"></div>
+  Pseudo:<input type="text" id="pseudoInput" placeholder="Enter your pseudo">
+  Content:<input type="text" id="contentInput" placeholder="Enter your message" onkeyup="handleTyping(event)">
+  <button onclick="sendMessage()">Envoyer</button>
+
+  <script>
+    const socket = io.connect();
+    const messagesContainer = document.getElementById('messages');
+    const pseudoInput = document.getElementById('pseudoInput');
+    const contentInput = document.getElementById('contentInput');
+    let typingTimeout = null;
+
+    socket.on('msg', (message) => {
+      const p = document.createElement('p');
+      p.innerText = message.content;
+      messagesContainer.appendChild(p);
+    });
+
+    socket.on('userConnected', () => {
+      const p = document.createElement('p');
+      p.innerText = "A new user is connected";
+      messagesContainer.appendChild(p);
+
+      const notification = document.createElement('div');
+      notification.innerText = 'New User Connected';
+      notification.className = 'notification';
+      document.body.appendChild(notification);
+      setTimeout(() => {
+        notification.remove();
+      }, 5000);
+    });
+
+    socket.on('userDisconnected', () => {
+      const p = document.createElement('p');
+      p.innerText = "A user has disconnected";
+      messagesContainer.appendChild(p);
+
+      const notification = document.createElement('div');
+      notification.innerText = 'User Disconnected';
+      notification.className = 'notification';
+      document.body.appendChild(notification);
+      setTimeout(() => {
+        notification.remove();
+      }, 5000);
+    });
+
+    socket.on('typing', (user) => {
+      const p = document.createElement('p');
+      p.innerText = `${user} is typing...`;
+      messagesContainer.appendChild(p);
+      clearTimeout(typingTimeout);
+      typingTimeout = setTimeout(() => {
+        p.remove();
+      }, 2000);
+    });
+
+    function sendMessage() {
+      const pseudo = pseudoInput.value;
+      const content = contentInput.value;
+      const message = { pseudo, content };
+      socket.emit('msg', message);
+      contentInput.value = '';
+    }
+
+    function handleTyping(event) {
+      if (event.key === 'Enter') {
+        const pseudo = pseudoInput.value;
+        socket.emit('typing', pseudo);
+      }
+    }
+  </script>
+  <style>
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: #f1f1f1;
+      padding: 10px;
+      border-radius: 5px;
+    }
+  </style>
+</body>
+</html> #}
+
+{#-------------this is the code with typing with onekeyup yemchiiiii --------------------#}
+
+<html>
+<head>
+  <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+  <h1>Chat</h1>
+  <a href="/Message/Liste">Liste des messages</a>
+  <div id="messages"></div>
+  Pseudo:<input type="text" id="pseudoInput" placeholder="Enter your pseudo">
+  Content:<input type="text" id="contentInput" placeholder="Enter your message" onkeyup="handleTyping(event)">
+  <button onclick="sendMessage()">Envoyer</button>
+
+  <script>
+    const socket = io.connect();
+    const messagesContainer = document.getElementById('messages');
+    const pseudoInput = document.getElementById('pseudoInput');
+    const contentInput = document.getElementById('contentInput');
+    let typingTimeout = null;
+
+    socket.on('msg', (message) => {
+      const p = document.createElement('p');
+      p.innerText = message.content;
+      messagesContainer.appendChild(p);
+    });
+
+    socket.on('userConnected', () => {
+      const p = document.createElement('p');
+      p.innerText = "A new user is connected";
+      messagesContainer.appendChild(p);
+      alert(`${user} has connected`);
+   
+    });
+
+    socket.on('userDisconnected', () => {
+      const p = document.createElement('p');
+      p.innerText = "A user has disconnected";
+      messagesContainer.appendChild(p);
+    });
+
+    socket.on('typing', (user) => {
+      const p = document.createElement('p');
+      p.innerText = `${user} is typing...`;
+      messagesContainer.appendChild(p);
+
+      // Display JavaScript notification for typing user
+      if (window.Notification && Notification.permission === 'granted') {
+        new Notification('User Typing', { body: `${user} is typing a message` });
+      }
+    });
+
+    function sendMessage() {
+      const pseudo = pseudoInput.value;
+      const content = contentInput.value;
+      const message = { pseudo, content };
+      socket.emit('msg', message);
+      contentInput.value = '';
+    }
+
+    function handleTyping(event) {
+      const pseudo = pseudoInput.value;
+      socket.emit('typing', pseudo);
+    }
+
+    // Request permission for notifications
+    if (window.Notification && Notification.permission !== 'granted') {
+      Notification.requestPermission();
+    }
+  </script>
+</body>
+</html> 
+
+
+{#hethii l pseudo feha yemchi mais typing mayemchiich#}
+{# <html>
+<head>
+  <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+  <h1>Chat</h1>
+  <div id="messages"></div>
+  Pseudo:<input type="text" id="pseudoInput" placeholder="Enter your pseudo">
+  Content:<input type="text" id="contentInput" placeholder="Enter your message" onkeyup="handleTyping(event)">
+  <button onclick="sendMessage()">Envoyer</button>
+
+  <script>
+    const socket = io.connect();
+    const messagesContainer = document.getElementById('messages');
+    const pseudoInput = document.getElementById('pseudoInput');
+    const contentInput = document.getElementById('contentInput');
+    let typingTimeout = null;
+    let currentUser = null;
+
+    socket.on('msg', (message) => {
+      const p = document.createElement('p');
+      p.innerText = `${message.pseudo}: ${message.content}`;
+      messagesContainer.appendChild(p);
+    });
+
+    socket.on('userConnected', (user) => {
+      const p = document.createElement('p');
+      p.innerText = `${user} has connected`;
+      messagesContainer.appendChild(p);
+      //hethi l alert li tatla3 l fou9
+       // alert(`${user} has disconnected`);
+    });
+
+    socket.on('userDisconnected', (user) => {
+      const p = document.createElement('p');
+      p.innerText = `${user} has disconnected`;
+      messagesContainer.appendChild(p);
+    });
+
+    socket.on('typing', (user) => {
+      const p = document.createElement('p');
+      p.innerText = `${user} is typing...`;
+      messagesContainer.appendChild(p);
+      clearTimeout(typingTimeout);
+      typingTimeout = setTimeout(() => {
+        p.remove();
+      }, 2000);
+    });
+
+    function sendMessage() {
+      const pseudo = pseudoInput.value;
+      const content = contentInput.value;
+      const message = { pseudo, content };
+      socket.emit('msg', message);
+      contentInput.value = '';
+    }
+
+    function handleTyping(event) {
+      if (event.key === 'Enter') {
+        const pseudo = pseudoInput.value;
+        socket.emit('typing', pseudo);
+      }
+    }
+
+    // Prompt the user to enter a pseudo before connecting to the chat
+    function promptPseudo() {
+      const pseudo = prompt('Enter your pseudo:');
+      if (pseudo) {
+        currentUser = pseudo;
+        pseudoInput.value = pseudo;
+        socket.emit('userConnected', pseudo);
+      } else {
+        promptPseudo();
+      }
+    }
+
+    // Request permission for notifications
+    if (window.Notification && Notification.permission !== 'granted') {
+      Notification.requestPermission();
+    }
+
+    promptPseudo();
+  </script>
+</body>
+</html> #}
+

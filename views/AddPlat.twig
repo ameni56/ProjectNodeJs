@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Ajouter un Plat</title>
+</head>
+<body>
+  <h1>Ajouter un message</h1>
+  <form action="/Plat" method="post" enctype="multipart/form-data">
+    <label for="plat_name">plat name:</label>
+    <input type="text" id="plat_name" name="plat_name" required>
+    <br>
+    <label for="price">price:</label>
+    <input type="number" id="price" name="price" required>
+    <br>
+    <label for="nbr_ingredients">nbr_ingredients:</label>
+    <input type="number" id="nbr_ingredients" name="nbr_ingredients" required>
+    <br>
+    <label for="description">description:</label>
+    <input type="text" id="description" name="description" required>
+    <br>
+    <label for="plat_image">plat_image:</label>
+    <input type="file" id="plat_image" name="plat_image" required>
+    <br>
+     
+    <button type="submit">Add</button>
+  </form>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!-- views/professeur_list.twig -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Liste des professeurs</title>
+  <style>
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    th, td {
+      border: 1px solid black;
+      padding: 8px;
+      text-align: left;
+    }
+  </style>
+</head>
+<body>
+  <h1>Liste des professeurs</h1>
+  
+  <!-- Search form -->
+  <form action="/professeurs/rechercher" method="GET">
+    <input type="text" name="email" placeholder="Rechercher par e-mail">
+    <button type="submit">Rechercher</button>
+  </form>
+  
+  <!-- Display professors table -->
+  <table>
+    <thead>
+      <tr>
+        <th>Nom complet</th>
+        <th>Email</th>
+        <th>Téléphone</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for professeur in professeurs %}
+        <tr>
+          <td>{{ professeur.fullname }}</td>
+          <td>{{ professeur.email }}</td>
+          <td>{{ professeur.telephone }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</body>
+</html>
